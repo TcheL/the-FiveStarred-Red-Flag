@@ -14,8 +14,9 @@
 
 ## GMT
 
-[GMT 红旗绘制代码](flag.sh) 根据标准国旗的制作过程，采用 GMT5 (Generic Mapping Tools, version: 5.x.x) 绘图工具来绘制五星红旗。
+[GMT 红旗绘制代码](flag.sh) 根据标准国旗的制作过程，采用 GMT5 ([Generic Mapping Tools](https://gmt.soest.hawaii.edu/projects/gmt), version: 5.x.x) 绘图工具来绘制五星红旗。
 
 ## Author
 
 Tche LIU, seistche@gmail.com, USTC
+
