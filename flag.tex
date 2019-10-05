@@ -1,0 +1,27 @@
+% \title{Nation flag of the People's Republic of China}
+\documentclass[tikz, svgnames]{standalone}
+\usepackage{tikz, verbatim}
+\usetikzlibrary{shapes.geometric}
+
+% Definition of dimension
+\def\thehigh{20}
+\def\thelong{\thehigh*1.5}
+% Definition of color
+\definecolor{Fire Engine Red}{HTML}{CF142B}
+\definecolor{Gorse}{HTML}{FAE042}
+% The style of four little stars
+\tikzstyle{starstyle}=[fill=Gorse, star point ratio=2.617, minimum size=\thehigh*0.1 cm] % Style using geometric shape
+
+\begin{document}
+\begin{tikzpicture}
+	\fill[Fire Engine Red] rectangle (\thelong, \thehigh); % Basic rectangle
+    \node[star,fill=Gorse, minimum size=\thehigh*0.3 cm, rotate=0, star point ratio=2.617] at (\thehigh*0.25,\thehigh*0.75) {}; % The big pentagram
+    % Little stars
+    \foreach \x/\y/\z in {\thehigh*0.5/\thehigh*0.9/120.96, \thehigh*0.6/\thehigh*0.8/98.13, \thehigh*0.6/\thehigh*0.65/74.05, \thehigh*0.5/\thehigh*0.55/51.34} {
+      \node[star, starstyle, rotate=\z] at (\x, \y){};
+%     \draw (\x, \y) -- (\thehigh*0.25, \thehigh*0.75);
+    }
+\end{tikzpicture}
+
+\end{document}
+
