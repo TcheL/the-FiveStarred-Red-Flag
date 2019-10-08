@@ -16,6 +16,10 @@
 
 [GMT 红旗绘制代码](flag.sh) 根据标准国旗的制作过程，采用 GMT5 ([Generic Mapping Tools](https://gmt.soest.hawaii.edu/projects/gmt), version: 5.x.x) 绘图工具来绘制五星红旗。
 
+在安装有 GMT5 的 Linux 机器上，通过命令 `$ ./flag.sh [high_value]` 即可按标准绘制高度为 high_value（默认为 10）的国旗图案。
+
+[脚本](flag.sh) 中 gmt_check 函数为辅助线绘制模块，取消该函数调用语句的注释即可绘制辅助线，具体效果可见 [此处](examples/flag_check.pdf)。
+
 ## Author
 
 Tche LIU, seistche@gmail.com, USTC

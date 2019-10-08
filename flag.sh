@@ -2,7 +2,13 @@
 sc=6
 pi=3.14159265
 
-high=10
+high=${1:-10}
+
+# === check input
+if [[ ! ${high} =~ ^[0-9.]+$ ]]; then
+  echo "Emmm, I just need a numerical value for high of pic."
+  exit 1
+fi
 
 long=`echo "scale=${sc}; ${high}*1.5" | bc`
 step=`echo "scale=${sc}; ${high}/20.0" | bc`
@@ -57,35 +63,35 @@ function find_starpoint_circumcircle() {
 function find_starpoint_incircle() {
 # find_starpoint_incircle cx1 cx2 cx3 cx4 cx5 cy1 cy2 cy3 cy4 cy5
 
-  # line 1-3 and 2-5
+  # === line 1-3 and 2-5
   lp1=`determine_line_parameter ${1} ${6} ${3} ${8}`
   lp2=`determine_line_parameter ${2} ${7} ${5} ${10}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
   ix1=${isp[0]}
   iy1=${isp[1]}
 
-  # line 2-4 and 3-1
+  # === line 2-4 and 3-1
   lp1=`determine_line_parameter ${2} ${7} ${4} ${9}`
   lp2=`determine_line_parameter ${3} ${8} ${1} ${6}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
   ix2=${isp[0]}
   iy2=${isp[1]}
 
-  # line 3-5 and 4-2
+  # === line 3-5 and 4-2
   lp1=`determine_line_parameter ${3} ${8} ${5} ${10}`
   lp2=`determine_line_parameter ${4} ${9} ${2} ${7}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
   ix3=${isp[0]}
   iy3=${isp[1]}
 
-  # line 4-1 and 3-5
+  # === line 4-1 and 3-5
   lp1=`determine_line_parameter ${4} ${9} ${1} ${6}`
   lp2=`determine_line_parameter ${3} ${8} ${5} ${10}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
   ix4=${isp[0]}
   iy4=${isp[1]}
 
-  # line 5-2 and 1-4
+  # === line 5-2 and 1-4
   lp1=`determine_line_parameter ${5} ${10} ${2} ${7}`
   lp2=`determine_line_parameter ${1} ${6} ${4} ${9}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
@@ -104,17 +110,17 @@ function gmt_star() {
   circums=(`echo ${circumpoints}`)
   ins=(`echo ${inpoints}`)
   gmt psxy -R${R} -J${J} -Gyellow -K -O >> ${ps} << EOF
-    ${circums[0]} ${circums[5]}
-    ${ins[0]} ${ins[5]}
-    ${circums[1]} ${circums[6]}
-    ${ins[1]} ${ins[6]}
-    ${circums[2]} ${circums[7]}
-    ${ins[2]} ${ins[7]}
-    ${circums[3]} ${circums[8]}
-    ${ins[3]} ${ins[8]}
-    ${circums[4]} ${circums[9]}
-    ${ins[4]} ${ins[9]}
-    ${circums[0]} ${circums[5]}
+    ${circums[0]}   ${circums[5]}
+    ${ins[0]}       ${ins[5]}
+    ${circums[1]}   ${circums[6]}
+    ${ins[1]}       ${ins[6]}
+    ${circums[2]}   ${circums[7]}
+    ${ins[2]}       ${ins[7]}
+    ${circums[3]}   ${circums[8]}
+    ${ins[3]}       ${ins[8]}
+    ${circums[4]}   ${circums[9]}
+    ${ins[4]}       ${ins[9]}
+    ${circums[0]}   ${circums[5]}
 EOF
 }
 
@@ -128,6 +134,43 @@ function gmt_small_star() {
   gmt_star ${x1} ${y1} ${d} ${ang}
 }
 
+function gmt_check() {
+# gmt_check
+
+  echo " 5 15  6" | awk -v dx=${step} '{print $1*dx, $2*dx, $3*dx}' | \
+    gmt psxy -R${R} -J${J} -Sc -K -O >> ${ps}
+  echo "10 18  2" | awk -v dx=${step} '{print $1*dx, $2*dx, $3*dx}' | \
+    gmt psxy -R${R} -J${J} -Sc -K -O >> ${ps}
+  echo "12 16  2" | awk -v dx=${step} '{print $1*dx, $2*dx, $3*dx}' | \
+    gmt psxy -R${R} -J${J} -Sc -K -O >> ${ps}
+  echo "12 13  2" | awk -v dx=${step} '{print $1*dx, $2*dx, $3*dx}' | \
+    gmt psxy -R${R} -J${J} -Sc -K -O >> ${ps}
+  echo "10 11  2" | awk -v dx=${step} '{print $1*dx, $2*dx, $3*dx}' | \
+    gmt psxy -R${R} -J${J} -Sc -K -O >> ${ps}
+
+  echo "10 18" | awk -v dx=${step} \
+    '{printf("%f %f\n %f %f\n", 5*dx, 15*dx, $1*dx, $2*dx)}' | \
+    gmt psxy -R${R} -J${J} -K -O >> ${ps}
+  echo "12 16" | awk -v dx=${step} \
+    '{printf("%f %f\n %f %f\n", 5*dx, 15*dx, $1*dx, $2*dx)}' | \
+    gmt psxy -R${R} -J${J} -K -O >> ${ps}
+  echo "12 13" | awk -v dx=${step} \
+    '{printf("%f %f\n %f %f\n", 5*dx, 15*dx, $1*dx, $2*dx)}' | \
+    gmt psxy -R${R} -J${J} -K -O >> ${ps}
+  echo "10 11" | awk -v dx=${step} \
+    '{printf("%f %f\n %f %f\n", 5*dx, 15*dx, $1*dx, $2*dx)}' | \
+    gmt psxy -R${R} -J${J} -K -O >> ${ps}
+
+  high2=`echo "scale=${sc}; ${high}/2" | bc`
+  long2=`echo "scale=${sc}; ${long}/2" | bc`
+  gmt psbasemap -Bxfg${long2} -Byfg${high2} -R${R} -J${J} -K -O >> ${ps}
+
+  high20=`echo "scale=${sc}; ${high}/20" | bc`
+  long30=`echo "scale=${sc}; ${long}/30" | bc`
+  gmt psbasemap -Y${high2} -Bxg${long30} -Byg${high20} \
+    -R0/${long2}/0/${high2} -J${J} -K -O >> ${ps}
+}
+
 #===============================================================================
 
 gmt set PS_MEDIA A0
@@ -135,18 +178,20 @@ gmt psxy -R${R} -J${J} -P -T -K > ${ps}
 
 gmt psbasemap -R${R} -J${J} -B+gred -K -O >> ${ps}
 
-# the big star
+# === the big star
 x0=`echo "scale=${sc}; 5*${step}" | bc`
 y0=`echo "scale=${sc}; 15*${step}" | bc`
 d=`echo "scale=${sc}; 3*${step}*2" | bc`
 echo "${x0} ${y0}" | gmt psxy -R${R} -J${J} -Sa${d} -Gyellow -K -O >> ${ps}
 # gmt_star ${x0} ${y0} ${d} 0.0
 
-# the small stars
+# === the small stars
 gmt_small_star 10 18 ${x0} ${y0}
 gmt_small_star 12 16 ${x0} ${y0}
 gmt_small_star 12 13 ${x0} ${y0}
 gmt_small_star 10 11 ${x0} ${y0}
+
+# gmt_check
 
 gmt psxy -R${R} -J${J} -T -O >> ${ps}
 # gmt psconvert -TG -A ${ps} # png
