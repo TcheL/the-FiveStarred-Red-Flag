@@ -1,0 +1,114 @@
+\documentclass[UTF8]{ctexart}
+
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+
+\title{关于 shell 脚本中函数的说明}
+\author{}
+\date{\today}
+
+\titleformat{\section}{\Large\bf\flushleft}{\thesection}{1em}{}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+
+\begin{document}
+
+\maketitle
+
+\section{determine-line-parameter}
+输入 ($x_1, y_1, x_2, y_2$)：
+两点的坐标。
+
+输出 ($k, b$)：
+两点所在直线的斜率和纵轴截距。
+
+计算原理：
+由直线方程的两点式
+\[ \frac{y - y_2}{y_1 - y_2} = \frac{x - x_2}{x_1 - x_2} \]
+得斜截式为
+\[ y = \frac{y_1 - y_2}{x_1 - x_2}x + y_2 - \frac{y_1 - y_2}{x_1 - x_2}x_2 \]
+所以，
+\[ k = \frac{y_1 - y_2}{x_1 - x_2} \]
+\[ b = y_2 - k x_2 \]
+
+\section{find-twoline-crosspoint}
+输入 ($k_1, b_1, k_2, b_2$)：
+两直线的斜截式参数。
+
+输出 ($x, y$)：
+两直线交点的坐标。
+
+计算原理：
+由两直线方程联立
+\[ \left\{
+  \begin{aligned}
+    & y = k_1 x + b_1 \\
+    & y = k_2 x + b_2
+  \end{aligned}
+\right. \]
+则
+\[ k_1 x + b_1 = k_2 x + b_2 \]
+所以，
+\[ x = \frac{b_2 - b_1}{k_1 - k_2} \]
+\[ y = k_1 x + b_1 \]
+
+\section{find-starpoint-outercircle}
+输入 ($x_0, y_0, d, \theta$)：
+五角星中心点坐标、外接圆直径及主顶点方位角。
+
+输出 ($x_1^o, x_2^o, x_3^o, x_4^o, x_5^o,
+y_1^o, y_2^o, y_3^o, y_4^o, y_5^o$)：
+五角星外圈上 outer point 的横坐标和纵坐标。
+
+计算原理：
+记 $\delta\theta = \nicefrac{2 \pi}{5}$，
+取 $\theta_i = \theta + (i - 1) \cdot \delta\theta$，
+则
+\[ x_i^o = x_0 + \cos(\theta_i) \frac{d}{2} \]
+\[ y_i^o = y_0 + \sin(\theta_i) \frac{d}{2} \]
+
+\section{find-starpoint-innercircle}
+输入 ($x_1^o, x_2^o, x_3^o, x_4^o, x_5^o,
+y_1^o, y_2^o, y_3^o, y_4^o, y_5^o$)：
+五角星外圈上 outer point 的横坐标和纵坐标。
+
+输出 ($x_1^i, x_2^i, x_3^i, x_4^i, x_5^i,
+y_1^i, y_2^i, y_3^i, y_4^i, y_5^i$)：
+五角星内圈上 inner point 的横坐标和纵坐标。
+
+计算原理：
+记 $l_i^j$ 为第 i 个与第 j 个 outer point 所在的直线，
+先由 determine-line-parameter 函数根据输入的点坐标确定出 $l_1^3$ 和 $l_2^5$ 的直线方程参数，
+再由 find-twoline-crosspoint 函数根据得到的方程参数确定出两条直线的交点，
+交点坐标即为第 1 个 inner point 的横、纵坐标。
+依此类推，即可求出其他四个 inner point 的坐标。
+
+\section{gmt-star}
+输入 ($x_0, y_0, d, \theta$)：
+五角星中心点坐标、外接圆直径及主顶点方位角。
+
+功能：
+利用 GMT 软件绘制五角星图案。
+
+原理：
+先由 find-starpoint-outercircle 函数输入的五角星参数确定出 outer point 的坐标，
+再由 find-starpoint-innercircle 函数根据得到的 outer point 坐标确定出 inner point 的坐标，
+最后调用 GMT 软件依次逐点勾勒出五角星的轮廓并进行颜色填充。
+
+\section{gmt-small-star}
+输入 ($i_x, i_y, x_0, y_0$)：
+小五角星的网格索引号及大五角星的坐标。
+
+功能：
+利用 GMT 软件绘制小五角星图案。
+
+原理：
+先由网格索引号乘以网格间距求出小五角星的中心点坐标，
+再由
+\[ \arctan \left( \frac{y_i - y_0}{x_i - x_0} \right) + \pi \]
+计算得到小五角星的顶点方位角，
+最后由 gmt-star 函数根据得到的小五角星参数绘制出小五角星图案。
+
+\end{document}

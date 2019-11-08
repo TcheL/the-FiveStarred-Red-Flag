@@ -1,26 +1,57 @@
-% \title{Nation flag of the People's Republic of China}
-\documentclass[tikz, svgnames]{standalone}
-\usepackage{tikz, verbatim}
+\documentclass[tikz]{standalone}
+\usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 
-% Definition of dimension
-\def\thehigh{20}
+\def\thehigh{10}
+\def\ischeck{0}
+
 \def\thelong{\thehigh*1.5}
-% Definition of color
-\definecolor{Fire Engine Red}{HTML}{CF142B}
-\definecolor{Gorse}{HTML}{FAE042}
-% The style of four little stars
-\tikzstyle{starstyle}=[fill=Gorse, star point ratio=2.617, minimum size=\thehigh*0.1 cm] % Style using geometric shape
+\def\thestep{\thehigh/20}
+\def\thexloc{\thestep*{10, 12, 12, 10}}
+\def\theyloc{\thestep*{18, 16, 13, 11}}
+\def\theangle{{90 + atan(3/5),
+               90 + atan(1/7),
+               90 - atan(2/7),
+               90 - atan(4/5)}}
+
+\tikzstyle{starstyle} = [star, fill = yellow,
+                         star point ratio = {cos(36) + sin(36)/tan(18)}]
 
 \begin{document}
-\begin{tikzpicture}
-	\fill[Fire Engine Red] rectangle (\thelong, \thehigh); % Basic rectangle
-    \node[star,fill=Gorse, minimum size=\thehigh*0.3 cm, rotate=0, star point ratio=2.617] at (\thehigh*0.25,\thehigh*0.75) {}; % The big pentagram
-    % Little stars
-    \foreach \x/\y/\z in {\thehigh*0.5/\thehigh*0.9/120.96, \thehigh*0.6/\thehigh*0.8/98.13, \thehigh*0.6/\thehigh*0.65/74.05, \thehigh*0.5/\thehigh*0.55/51.34} {
-      \node[star, starstyle, rotate=\z] at (\x, \y){};
-%     \draw (\x, \y) -- (\thehigh*0.25, \thehigh*0.75);
-    }
+
+\begin{tikzpicture} [x = 1 cm, y = 1 cm]
+  % Backgroud
+  \fill[red] (0, 0) rectangle (\thelong, \thehigh);
+
+  % The big star
+  \node[starstyle, minimum size = \thestep*6 cm, rotate = 0]
+    at (\thestep*5, \thestep*15) {};
+
+  % Four small star
+  \foreach \i in {0, 1, ..., 3}
+    \node[starstyle, minimum size = \thestep*2 cm, rotate = {\theangle[\i]}]
+      at (\thexloc[\i], \theyloc[\i]) {};
+
+  % Warning for too small size
+  \pgfmathparse{int(\thehigh)}
+  \ifnum \pgfmathresult < 9
+    \node[above right] at (0, 0)
+      {\tiny Too small size to ensmall enough the small stars};
+  \fi
+
+  % Do some checks
+  \ifnum \ischeck = 1
+    %% Grid
+    \draw[thick] (0, 0) grid [xstep = \thestep*15, ystep = \thestep*10]
+      (\thelong, \thehigh);
+    \draw (0, \thestep*10) grid [xstep = \thestep, ystep = \thestep]
+      (\thestep*15, \thestep*20);
+    %% Circle and line
+    \draw (\thestep*5, \thestep*15) circle (\thestep*3);
+    \foreach \i in {0, ..., 3}
+      \draw (\thexloc[\i], \theyloc[\i]) circle (\thestep*1)
+        -- (\thestep*5, \thestep*15);
+  \fi
 \end{tikzpicture}
 
 \end{document}

@@ -21,9 +21,9 @@ ps=examples/flag.ps
 
 function determine_line_parameter() {
 # determine_towline_parameter x1 y1 x2 y2
-  k1=`echo "scale=${sc}; (${2} - ${4})/(${1} - ${3})" | bc`
-  b1=`echo "scale=${sc}; ${4} - ${k1}*${3}" | bc`
-  echo "${k1} ${b1}"
+  k=`echo "scale=${sc}; (${2} - ${4})/(${1} - ${3})" | bc`
+  b=`echo "scale=${sc}; ${4} - ${k}*${3}" | bc`
+  echo "${k} ${b}"
 }
 
 function find_twoline_crosspoint() {
@@ -33,35 +33,35 @@ function find_twoline_crosspoint() {
   echo "${x} ${y}"
 }
 
-function find_starpoint_circumcircle() {
-# find_starpoint_circumcircle x0 y0 d ang
+function find_starpoint_outercircle() {
+# find_starpoint_outercircle x0 y0 d ang
   dang=`echo "scale=${sc}; 2*${pi}/5.0" | bc`
 
-  ang=${4}
-  cx1=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
-  cy1=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
+  ang=`echo "scale=${sc}; ${4} + ${dang}*0" | bc`
+  ox1=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
+  oy1=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
 
-  ang=`echo "scale=${sc}; ${ang} + ${dang}" | bc`
-  cx2=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
-  cy2=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
+  ang=`echo "scale=${sc}; ${4} + ${dang}*1" | bc`
+  ox2=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
+  oy2=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
 
-  ang=`echo "scale=${sc}; ${ang} + ${dang}" | bc`
-  cx3=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
-  cy3=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
+  ang=`echo "scale=${sc}; ${4} + ${dang}*2" | bc`
+  ox3=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
+  oy3=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
 
-  ang=`echo "scale=${sc}; ${ang} + ${dang}" | bc`
-  cx4=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
-  cy4=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
+  ang=`echo "scale=${sc}; ${4} + ${dang}*3" | bc`
+  ox4=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
+  oy4=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
 
-  ang=`echo "scale=${sc}; ${ang} + ${dang}" | bc`
-  cx5=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
-  cy5=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
+  ang=`echo "scale=${sc}; ${4} + ${dang}*4" | bc`
+  ox5=`echo "scale=${sc}; ${1} + c(${ang})*${3}/2" | bc -l`
+  oy5=`echo "scale=${sc}; ${2} + s(${ang})*${3}/2" | bc -l`
 
-  echo "${cx1} ${cx2} ${cx3} ${cx4} ${cx5} ${cy1} ${cy2} ${cy3} ${cy4} ${cy5}"
+  echo "${ox1} ${ox2} ${ox3} ${ox4} ${ox5} ${oy1} ${oy2} ${oy3} ${oy4} ${oy5}"
 }
 
-function find_starpoint_incircle() {
-# find_starpoint_incircle cx1 cx2 cx3 cx4 cx5 cy1 cy2 cy3 cy4 cy5
+function find_starpoint_innercircle() {
+# find_starpoint_innercircle ox1 ox2 ox3 ox4 ox5 oy1 oy2 oy3 oy4 oy5
 
   # === line 1-3 and 2-5
   lp1=`determine_line_parameter ${1} ${6} ${3} ${8}`
@@ -104,23 +104,23 @@ function find_starpoint_incircle() {
 function gmt_star() {
 # gmt_star x0 y0 d ang
 
-  circumpoints=`find_starpoint_circumcircle ${1} ${2} ${3} ${4}`
-  inpoints=`find_starpoint_incircle ${circumpoints}`
+  outerpoints=`find_starpoint_outercircle ${1} ${2} ${3} ${4}`
+  innerpoints=`find_starpoint_innercircle ${outerpoints}`
 
-  circums=(`echo ${circumpoints}`)
-  ins=(`echo ${inpoints}`)
+  ops=(`echo ${outerpoints}`)
+  ips=(`echo ${innerpoints}`)
   gmt psxy -R${R} -J${J} -Gyellow -K -O >> ${ps} << EOF
-    ${circums[0]}   ${circums[5]}
-    ${ins[0]}       ${ins[5]}
-    ${circums[1]}   ${circums[6]}
-    ${ins[1]}       ${ins[6]}
-    ${circums[2]}   ${circums[7]}
-    ${ins[2]}       ${ins[7]}
-    ${circums[3]}   ${circums[8]}
-    ${ins[3]}       ${ins[8]}
-    ${circums[4]}   ${circums[9]}
-    ${ins[4]}       ${ins[9]}
-    ${circums[0]}   ${circums[5]}
+    ${ops[0]} ${ops[5]}
+    ${ips[0]} ${ips[5]}
+    ${ops[1]} ${ops[6]}
+    ${ips[1]} ${ips[6]}
+    ${ops[2]} ${ops[7]}
+    ${ips[2]} ${ips[7]}
+    ${ops[3]} ${ops[8]}
+    ${ips[3]} ${ips[8]}
+    ${ops[4]} ${ops[9]}
+    ${ips[4]} ${ips[9]}
+    ${ops[0]} ${ops[5]}
 EOF
 }
 
