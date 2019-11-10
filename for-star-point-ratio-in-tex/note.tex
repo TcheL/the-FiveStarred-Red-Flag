@@ -29,7 +29,7 @@
 根据 \href{http://tug.org/svn/texlive/trunk/Master/texmf-dist/doc/%
 generic/pgf/pgfmanual.pdf?revision=51817&view=co}
 {\tikzprint~\& PGF Manual for Version 3.1.4b} 中第 781 页的介绍，
-star point ratio 是指 inner point 和 outer point 的半径之比。
+star point ratio 是指 outer point 与 inner point 的半径之比。
 当通过指定 minimum size 来放大 star 时，
 inner point 的半径按此比例随之增大。
 
@@ -66,6 +66,7 @@ star points 趋于无穷时，
     \coordinate (d) at ({90 - 360/5*2}:{\rdouter});
     \coordinate (e) at ({90 - 360/5*3}:{\rdouter});
     \coordinate (f) at ({90 - 360/5*4}:{\rdouter});
+    \coordinate (a') at ({90 - 36}:{\rdinner});
 
     \draw[blue] (o) circle (\rdouter);
     \draw[blue] (o) circle (\rdinner);
@@ -77,15 +78,20 @@ star points 趋于无穷时，
       -- (c) node[above right] {$C$}
       -- (e) node[below left] {$E$}
       -- cycle;
-    \draw[dashed, thin] (o) -- ({90 - 36}:{\rdinner})
-      node[above right] {$A'$};
+    \draw[dashed, thin] (o) -- (a') node[above right] {$A'$};
+
+    \draw[thin] (o) +(90:0.2) arc (90:{90 + 36}:0.2);
+    \draw[thin] (b) +(270:0.4) arc (270:{270 - 18}:0.4);
+    \draw[thin] ($(a)!0.5!(a')$) +(180:0.1) |- +(- 90:0.1);
+
     \draw[thick, red, line join = bevel]
          (o) node[below, black] {$O$}
       -- (a) node[above left, black] {$A$}
       -- (b) -- cycle;
-
-    \draw (o) +(90:0.2) arc (90:{90 + 36}:0.2);
-    \draw (b) +(270:0.4) arc (270:{270 - 18}:0.4);
+    \draw ($(o)!0.5!(a)$) node[below = 2 pt, left = - 4 pt]
+      {\footnotesize $r_i$};
+    \draw ($(o)!0.5!(b)$) node[right = - 3 pt]
+      {\footnotesize $r_o$};
   \end{tikzpicture}
 \end{center}
 
@@ -95,9 +101,10 @@ star points 趋于无穷时，
 $\angle ABA' = \angle ACE = (180^\circ - \angle EAC) \div 2 = 36^\circ$，
 $\angle ABO = \angle ABA' \div 2 = 18^\circ$。
 而 $\angle AOB = \angle AOA' \div 2 = (360^\circ \div 5) \div 2 = 36^\circ$，
-所以
-\[ \frac{OA}{OB} = \cos \angle AOB + \frac{\sin \angle AOB}{\tan \angle ABO}
-                 = \cos(36^\circ) + \frac{\sin(36^\circ)}{\tan(18^\circ)} \]
+当取 $r_i = \overline{OA} = 1$ 时，则
+\[ r_o = \overline{OB} = \cos \angle AOB + \frac{\sin \angle AOB}{\tan \angle ABO}
+       = \cos(36^\circ) + \frac{\sin(36^\circ)}{\tan(18^\circ)} \]
+此即所谓 star point ratio 。
 
 在 \tikzprint 中，三角函数默认采用角度值进行计算，
 因此设置 star point ratio = \spratio 。

@@ -84,9 +84,9 @@ function find_starpoint_innercircle() {
   ix3=${isp[0]}
   iy3=${isp[1]}
 
-  # === line 4-1 and 3-5
+  # === line 4-1 and 5-3
   lp1=`determine_line_parameter ${4} ${9} ${1} ${6}`
-  lp2=`determine_line_parameter ${3} ${8} ${5} ${10}`
+  lp2=`determine_line_parameter ${5} ${10} ${3} ${8}`
   isp=(`find_twoline_crosspoint ${lp1} ${lp2}`)
   ix4=${isp[0]}
   iy4=${isp[1]}
@@ -183,7 +183,7 @@ x0=`echo "scale=${sc}; 5*${step}" | bc`
 y0=`echo "scale=${sc}; 15*${step}" | bc`
 d=`echo "scale=${sc}; 3*${step}*2" | bc`
 echo "${x0} ${y0}" | gmt psxy -R${R} -J${J} -Sa${d} -Gyellow -K -O >> ${ps}
-# gmt_star ${x0} ${y0} ${d} 0.0
+# gmt_star ${x0} ${y0} ${d} 90.0
 
 # === the small stars
 gmt_small_star 10 18 ${x0} ${y0}
