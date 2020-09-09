@@ -1,3 +1,5 @@
+%! TeX program = xelatex
+
 \documentclass[UTF8]{ctexart}
 
 \usepackage{titlesec}
@@ -63,8 +65,8 @@ y_1^o, y_2^o, y_3^o, y_4^o, y_5^o$)：
 五角星外圈上 outer point 的横坐标和纵坐标。
 
 计算原理：
-记 $\delta\theta = \nicefrac{2 \pi}{5}$，
-取 $\theta_i = \theta + (i - 1) \cdot \delta\theta$，
+记 $\Delta\theta = \nicefrac{2 \pi}{5}$，
+取 $\theta_i = \theta + (i - 1) \cdot \Delta\theta, (i = 1, 2, \ldots, 5)$，
 则
 \[ x_i^o = x_0 + \cos(\theta_i) \frac{d}{2} \]
 \[ y_i^o = y_0 + \sin(\theta_i) \frac{d}{2} \]
@@ -98,7 +100,7 @@ y_1^i, y_2^i, y_3^i, y_4^i, y_5^i$)：
 最后调用 GMT 软件依次逐点勾勒出五角星的轮廓并进行颜色填充。
 
 \section{gmt-small-star}
-输入 ($i_x, i_y, x_0, y_0$)：
+输入 ($i_k, i_k, x_0, y_0$)：
 小五角星的网格索引号及大五角星的坐标。
 
 功能：
@@ -106,8 +108,12 @@ y_1^i, y_2^i, y_3^i, y_4^i, y_5^i$)：
 
 原理：
 先由网格索引号乘以网格间距求出小五角星的中心点坐标，
+即
+\[ x_k = i_k \cdot \Delta h \]
+\[ y_k = j_k \cdot \Delta h \]
+其中 $k = 1, 2, \ldots, 4$。
 再由
-\[ \arctan \left( \frac{y_i - y_0}{x_i - x_0} \right) + \pi \]
+\[ \theta = \arctan \left( \frac{y_i - y_0}{x_i - x_0} \right) + \pi \]
 计算得到小五角星的顶点方位角，
 最后由 gmt-star 函数根据得到的小五角星参数绘制出小五角星图案。
 

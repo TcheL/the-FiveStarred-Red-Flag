@@ -125,7 +125,7 @@ EOF
 }
 
 function gmt_small_star() {
-# gmt_small_star ix iy x0 y0
+# gmt_small_star ik jk x0 y0
 
   x1=`echo "scale=${sc}; ${1}*${step}" | bc`
   y1=`echo "scale=${sc}; ${2}*${step}" | bc`
